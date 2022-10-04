@@ -1,0 +1,93 @@
+<div class="row animated FadeIn fast">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <input type="text"
+                       class="form-control"
+                       placeholder="Buscar Usuario..."
+                       (keyup)="buscar(txtTermino.value)"
+                       #txtTermino>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row animated FadeIn fast" *ngIf="cargando">
+    <div class="col-12">
+        <div class="alert-info text-center" role="alert">
+            <h4 class="alert-heading">Cargando</h4>
+            <i class="fa fa-spin fa-refresh fa-2x"></i>
+            <p class="mb-0">Por Favor espere...</p>
+        </div>
+    </div>
+</div>
+
+<div class="row animated FadeIn fast"  *ngIf="!cargando">
+    <div class="div col-12">
+        <div class="div card">
+            <div class="card-body">
+                <h4 class="card-title">Total de Usuarios ({{total_usuarios}})</h4>
+                <h6 class="card-subtitle">Usuarios Registrados en mi aplicacion.</h6>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="w100">Avatar</th>
+                                <th>Correo</th>
+                                <th>Nombre</th>
+                                <th class="w140">Role</th>
+                                <th class="w100">Auth</th>
+                                <th class="text-nowrap w100">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let usuario of usuarios">
+                                <td class="text-center">
+                                    <img [src]="usuario.imagenUrl" 
+                                         alt="Avatar de Usuario" 
+                                         class="avatar cursor"
+                                         (click)="abrirModal(usuario)">
+                                </td>
+                                <td>{{usuario.email}}</td>
+                                <td>{{usuario.nombre}}</td>
+                                <td>
+                                    <select class="form-control" 
+                                            [(ngModel)]="usuario.role"
+                                            (change)="cambiarRole(usuario)">
+                                        <option value="USER_ROLE">Usuario</option>
+                                        <option value="ADMIN_ROLE">Admin</option>
+                                    </select>
+                                </td>
+
+                                <td>
+                                    <span class="label label-info"   *ngIf="!usuario.google">Normal</span>
+                                    <span class="label label-danger" *ngIf="usuario.google">Google</span>
+                                </td>
+
+                                <td class="text-nowrap text-center">
+                                    <a data-toggle="tooltip" 
+                                       data-original-title="Borrar" 
+                                       class="cursor"
+                                       (click)="eliminarUsuario(usuario)"> 
+                                        <i class="fa fa-close text-danger"></i> 
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+               <div *ngIf="txtTermino.value.length === 0">
+                    <button class="btn btn-secondary" 
+                            (click)="cambiarPagina(-5)" 
+                            *ngIf="desde !== 0">Anteriores</button>
+                    &nbsp;
+                    <button class="btn btn-secondary" 
+                            (click)="cambiarPagina(5)" 
+                            *ngIf="desde + 5 < total_usuarios">Siguientes</button>
+               </div>
+
+            </div>
+        </div>
+    </div>
+</div>

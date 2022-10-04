@@ -5,12 +5,14 @@ import { FormsModule} from '@angular/forms';
 import { DoughnutChartComponent } from './doughnut-chart/doughnut-chart.component';
 
 import { NgChartsModule } from 'ng2-charts';
+import { ModalImagenComponent } from './modal-imagen/modal-imagen.component';
 
 
 @NgModule({
   declarations: [
     IncrementadorComponent,
-    DoughnutChartComponent
+    DoughnutChartComponent,
+    ModalImagenComponent
   ],
   imports: [
     CommonModule,
@@ -19,7 +21,8 @@ import { NgChartsModule } from 'ng2-charts';
   ],
   exports:[
     IncrementadorComponent,
-    DoughnutChartComponent
+    DoughnutChartComponent,
+    ModalImagenComponent
   ]
 })
 export class ComponentsModule { }

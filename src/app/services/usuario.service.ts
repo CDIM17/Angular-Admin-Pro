@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import {catchError, map, Observable, of, tap} from 'rxjs';
+import {catchError, delay, map, Observable, of, tap} from 'rxjs';
 import { Router } from '@angular/router';
 import { Usuario } from '../models/usuario.model';
+import { CargarUsuario } from '../interfaces/cargar-usuarios.interface';
 
 declare const google:any;
 
@@ -23,6 +24,15 @@ export class UsuarioService {
 
   get uid():string | undefined{
     return this.usuario.uid;
+  }
+
+  get headers()
+  {
+    return {
+      headers: {
+        'x-token':this.getToken
+      }
+    }
   }
 
   constructor(private http:HttpClient,
@@ -61,6 +71,33 @@ export class UsuarioService {
     );
   }
 
+  cargarUsuarios(desde:number = 0)
+  {
+    const url = `${base_url}/usuarios?desde=${desde}`;
+
+    return this.http.get<CargarUsuario>(url,this.headers).pipe(
+      delay(200),
+      map(data => {
+
+        const usuarios = data.usuarios.map(user => new Usuario(
+          user.nombre,
+          user.email,
+          '',
+          user.img,
+          user.google,
+          user.role,
+          user.uid
+        ));
+
+        return {
+          usuarios,
+          total:data.total
+        }
+        
+      })
+    );
+  }
+
   crearUsuario(formData:any)
   {
     return this.http.post(`${base_url}/usuarios`,formData).pipe(
@@ -77,11 +114,19 @@ export class UsuarioService {
       role:this.usuario.role || ''
     }
 
-      return this.http.put(`${base_url}/usuarios/${this.uid}`,data,{
-          headers:{
-            'x-token':this.getToken
-          }
-        });
+    return this.http.put(`${base_url}/usuarios/${this.uid}`,data,this.headers);
+  }
+
+  guardarUsuario(usuario:Usuario)
+  {
+    return this.http.put(`${base_url}/usuarios/${usuario.uid}`,usuario,this.headers);
+  }
+
+  eliminarUsuario(usuario:Usuario)
+  {
+    const url = `${base_url}/usuarios/${usuario.uid}`;
+
+    return this.http.delete(url,this.headers);
   }
 
   login(formData:any)

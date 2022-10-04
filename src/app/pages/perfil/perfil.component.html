@@ -66,9 +66,12 @@
                     Imagen del Usuario
                 </h6>
 
+               <div class="text-center">
                 <img *ngIf="!imgTemp" [src]="usuario.imagenUrl" class="img-avatar">
                 <img *ngIf="imgTemp" [src]="imgTemp" class="img-avatar">
-                <br><br>
+               </div>
+                <br>
+
                 <input type="file"
                        (change)="cambiarImagen($event)">
                 <br><br>
