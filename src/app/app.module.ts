@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { AppComponent } from './app.component';
 import { NotPageFoundComponent } from './pages/not-page-found/not-page-found.component';
 import { ComponentsModule } from './components/components.module';
+import { PipesModule } from './pipes/pipes.module';
 
 
 @NgModule({
@@ -20,7 +21,8 @@ import { ComponentsModule } from './components/components.module';
     AppRoutingModule,
     PagesModule,
     AuthModule,
-    ComponentsModule
+    ComponentsModule,
+    PipesModule
   ],
   exports:[
   ],
