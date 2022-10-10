@@ -22,6 +22,10 @@ export class UsuarioService {
     return localStorage.getItem('token') || '';
   }
 
+  get role():string{
+    return this.usuario.role || '';
+  }
+
   get uid():string | undefined{
     return this.usuario.uid;
   }
@@ -38,22 +42,24 @@ export class UsuarioService {
   constructor(private http:HttpClient,
               private router:Router) { }
 
+  guardarLocalStorage(token:string,menu:string)
+  {
+    localStorage.setItem('token',token);
+    localStorage.setItem('menu',JSON.stringify(menu));
+  }            
+
   validarToken()
   {
     const token = localStorage.getItem('token') || '';
 
-    return this.http.get(`${base_url}/login/renew`,{
-      headers:{
-        'x-token':this.getToken
-      }
-    }).pipe(
+    return this.http.get(`${base_url}/login/renew`,this.headers).pipe(
       tap(
         (resp:any) => {
 
           const {nombre,email,img,google,role,uid} = resp.usuario;
           this.usuario = new Usuario(nombre,email,'',img,google,role,uid);
 
-          localStorage.setItem('token',resp.token);
+          this.guardarLocalStorage(resp.token,resp.menu);
         }
       ),
       map(
@@ -102,7 +108,7 @@ export class UsuarioService {
   {
     return this.http.post(`${base_url}/usuarios`,formData).pipe(
       tap((data:any) => {
-        localStorage.setItem('token',data.token)
+        this.guardarLocalStorage(data.token,data.menu);
       })
     );
   }
@@ -133,7 +139,7 @@ export class UsuarioService {
   {
     return this.http.post(`${base_url}/login`,formData).pipe(
       tap((data:any) => {
-        localStorage.setItem('token',data.token)
+        this.guardarLocalStorage(data.token,data.menu);
       })
     );
   }
@@ -143,7 +149,7 @@ export class UsuarioService {
     return this.http.post(`${base_url}/login/google`,{token:token}).pipe(
       tap((data:any) => {
        // console.log(data.token);
-        localStorage.setItem('token',data.token);
+        this.guardarLocalStorage(data.token,data.menu);
       })
     );
   }
@@ -151,6 +157,7 @@ export class UsuarioService {
   logout()
   {
     localStorage.removeItem('token');
+    localStorage.removeItem('menu');
 
     this.router.navigateByUrl('/login');
 
